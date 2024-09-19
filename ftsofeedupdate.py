@@ -22,15 +22,18 @@ def add_feed(data, category, name, sources):
     }
     data.append(new_feed)
 
-# Function to update a feed by name (case-sensitive)
+# Function to update a feed by name
 def update_feed(data, name, new_sources=None, new_category=None):
     feed_found = False
+    
     for feed in data:
         if feed['feed']['name'] == name:  # Case-sensitive matching
             feed_found = True
-            if new_sources:  # Update sources only if new_sources is provided
+            # Update sources if new_sources is provided, otherwise keep the old sources
+            if new_sources is not None:
                 feed['sources'] = new_sources
-            if new_category is not None:  # Update category if new_category is provided
+            # Update category if new_category is provided, otherwise keep the old category
+            if new_category is not None:
                 feed['feed']['category'] = new_category
             print(f"Feed '{name}' updated successfully.")
             break
