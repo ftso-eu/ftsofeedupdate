@@ -5,9 +5,9 @@ This Python script allows users to modify JSON files containing feed information
 
 ## Features
 
-- Add new feeds with category, feed name (**FEED_NAME**), and sources.
+- Add new feeds with category, name, and sources.
 - Update existing feeds, including changing their sources and category.
-- Delete feeds by specifying their feed name (**FEED_NAME**).
+- Delete feeds by specifying their name.
 
 ## Requirements
 
@@ -48,7 +48,7 @@ The script requires two mandatory arguments, the `source_file` (the path to the 
 ### Command-Line Syntax
 
 ```bash
-python script.py source_file destination_file [--add CATEGORY FEED_NAME SOURCES] [--update FEED_NAME NEW_SOURCES NEW_CATEGORY] [--delete FEED_NAME]
+python script.py source_file destination_file [--add CATEGORY NAME SOURCES] [--update NAME NEW_SOURCES NEW_CATEGORY] [--delete NAME]
 ```
 
 ### Example Commands
@@ -57,7 +57,7 @@ python script.py source_file destination_file [--add CATEGORY FEED_NAME SOURCES]
    ```bash
    python script.py feeds.json feeds_updated.json --add 1 "NEW_FEED/USD" '[{"exchange":"example","symbol":"NEW/USD"}]'
    ```
-   This command adds a new feed with category `1`, feed name `"NEW_FEED/USD"`, and the specified sources.
+   This command adds a new feed with category `1`, name `"NEW_FEED/USD"`, and the specified sources.
 
 2. **Update an Existing Feed**:
    ```bash
@@ -75,9 +75,9 @@ python script.py source_file destination_file [--add CATEGORY FEED_NAME SOURCES]
 
 - **source_file**: Path to the source JSON file to be modified.
 - **destination_file**: Path to save the updated JSON file.
-- **--add**: Adds a new feed with the provided category, feed name, and sources. Example: `--add CATEGORY FEED_NAME SOURCES`
-- **--update**: Updates the sources or category of an existing feed. Example: `--update FEED_NAME NEW_SOURCES NEW_CATEGORY`
-- **--delete**: Deletes the feed by the specified feed name. Example: `--delete FEED_NAME`
+- **--add**: Adds a new feed with the provided category, name, and sources. Example: `--add CATEGORY NAME SOURCES`
+- **--update**: Updates the sources or category of an existing feed. Example: `--update NAME NEW_SOURCES NEW_CATEGORY`
+- **--delete**: Deletes the feed by the specified name. Example: `--delete NAME`
 
 ### How It Works
 
@@ -89,7 +89,7 @@ python script.py source_file destination_file [--add CATEGORY FEED_NAME SOURCES]
 
 Each feed entry in the JSON contains:
 - **Category**: An integer indicating the feed's category.
-- **FEED_NAME**: A string representing the feed's name.
+- **Name**: A string representing the feed's name.
 - **Sources**: A list of sources, where each source includes an `exchange` and a `symbol`.
 
 ---
