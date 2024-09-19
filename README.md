@@ -55,7 +55,7 @@ python script.py source_file destination_file [--add CATEGORY NAME SOURCES] [--u
 
 1. **Add a New Feed**:
    ```bash
-   python script.py feeds.json feeds_updated.json --add 1 "NEW_FEED/USD" '[{"exchange":"example","symbol":"NEW/USD"}]'
+   python script.py feeds.json feeds_updated.json --add 1 "NEW/USD" '[{"exchange":"gateio","symbol":"NEW/USDT"},{"exchange":"kraken","symbol":"NEW/USD"},{"exchange":"mexc","symbol":"NEW/USDT"}]'
    ```
    This command adds a new feed with category `1`, name `"NEW_FEED/USD"`, and the specified sources.
 
