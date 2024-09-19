@@ -61,15 +61,15 @@ python script.py source_file destination_file [--add CATEGORY NAME SOURCES] [--u
 
 2. **Update an Existing Feed**:
    ```bash
-   python script.py feeds.json feeds_updated.json --update "FLR/USD" '[{"exchange":"new_exchange","symbol":"FLR/USD"}]' 2
+   python script.py feeds.json feeds_updated.json --update "NEW/USD" '[{"exchange":"nu-exchange","symbol":"NEW/USDT"},{"exchange":"kraken","symbol":"NEW/USD"},{"exchange":"mexc","symbol":"NEW/USDT"}]' 2
    ```
    This command updates the feed `"FLR/USD"` by modifying its sources and updating the category to `2`.
 
 3. **Delete a Feed**:
    ```bash
-   python script.py feeds.json feeds_updated.json --delete "SGB/USD"
+   python script.py feeds.json feeds_updated.json --delete "NEW/USD"
    ```
-   This command deletes the feed `"SGB/USD"` from the JSON file.
+   This command deletes the feed `"NEW/USD"` from the JSON file.
 
 ### Parameters
 
