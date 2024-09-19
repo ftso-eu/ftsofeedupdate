@@ -12,20 +12,20 @@ def save_json_file(data, file_path):
         json.dump(data, file, indent=4)
 
 # Function to add a new feed
-def add_feed(data, category, feed_name, sources):
+def add_feed(data, category, name, sources):
     new_feed = {
         "feed": {
             "category": category,
-            "name": feed_name
+            "name": name
         },
         "sources": sources
     }
     data.append(new_feed)
 
 # Function to update an existing feed
-def update_feed(data, feed_name, new_sources=None, new_category=None):
+def update_feed(data, name, new_sources=None, new_category=None):
     for feed in data:
-        if feed['feed']['name'] == feed_name:
+        if feed['feed']['name'] == name:
             if new_sources:
                 feed['sources'] = new_sources
             if new_category is not None:
@@ -34,19 +34,19 @@ def update_feed(data, feed_name, new_sources=None, new_category=None):
     return False
 
 # Function to delete a feed by name
-def delete_feed(data, feed_name):
-    return [feed for feed in data if feed['feed']['name'] != feed_name]
+def delete_feed(data, name):
+    return [feed for feed in data if feed['feed']['name'] != name]
 
 # argparse setup to accept source and destination files
 def main():
     parser = argparse.ArgumentParser(description="Modify JSON feeds from the command line")
     parser.add_argument("source_file", help="The source JSON file")
     parser.add_argument("destination_file", help="The destination JSON file")
-    parser.add_argument("--add", nargs=3, metavar=('CATEGORY', 'FEED_NAME', 'SOURCES'),
+    parser.add_argument("--add", nargs=3, metavar=('CATEGORY', 'NAME', 'SOURCES'),
                         help="Add a new feed. Example: --add 1 FLR/USD '[{\"exchange\":\"example\",\"symbol\":\"FLR/USD\"}]'")
-    parser.add_argument("--update", nargs=3, metavar=('FEED_NAME', 'NEW_SOURCES', 'NEW_CATEGORY'),
+    parser.add_argument("--update", nargs=3, metavar=('NAME', 'NEW_SOURCES', 'NEW_CATEGORY'),
                         help="Update an existing feed. Example: --update FLR/USD '[{\"exchange\":\"new_exchange\",\"symbol\":\"FLR/USD\"}]' 2")
-    parser.add_argument("--delete", metavar='FEED_NAME', help="Delete a feed. Example: --delete FLR/USD")
+    parser.add_argument("--delete", metavar='NAME', help="Delete a feed. Example: --delete FLR/USD")
     
     args = parser.parse_args()
 
@@ -56,19 +56,19 @@ def main():
     # Handle add, update, and delete operations
     if args.add:
         category = int(args.add[0])
-        feed_name = args.add[1]
+        name = args.add[1]
         sources = json.loads(args.add[2])  # Parse the sources as a JSON string
-        add_feed(data, category, feed_name, sources)
-        print(f"Added feed: {feed_name}")
+        add_feed(data, category, name, sources)
+        print(f"Added feed: {name}")
 
     if args.update:
-        feed_name = args.update[0]
+        name = args.update[0]
         new_sources = json.loads(args.update[1])  # Parse the new sources as a JSON string
         new_category = int(args.update[2]) if args.update[2] else None
-        if update_feed(data, feed_name, new_sources, new_category):
-            print(f"Updated feed: {feed_name}")
+        if update_feed(data, name, new_sources, new_category):
+            print(f"Updated feed: {name}")
         else:
-            print(f"Feed not found: {feed_name}")
+            print(f"Feed not found: {name}")
 
     if args.delete:
         data = delete_feed(data, args.delete)
