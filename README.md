@@ -32,7 +32,7 @@ Make sure Python 3.x is installed on your machine. If you don't have it, follow 
 You can clone the script using `git` or download it manually.
 
 ```bash
-git clone [https://github.com/ftsofeedupdate.git](https://github.com/ftso-eu/ftsofeedupdate)
+git clone https://github.com/ftso-eu/ftsofeedupdate
 ```
 
 ## Usage
