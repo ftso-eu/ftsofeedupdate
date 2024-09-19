@@ -3,6 +3,8 @@
 
 This Python script allows users to modify JSON files containing feed information by adding, updating, or deleting feeds directly from the command line.
 
+Check [this](https://github.com/flare-foundation/ftso-v2-example-value-provider/blob/main/src/config/feeds.json) out for reference.
+
 ## Features
 
 - Add new feeds with category, name, and sources.
