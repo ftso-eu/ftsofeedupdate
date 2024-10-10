@@ -117,3 +117,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# Including proper handling of source and destination file arguments for updating feeds

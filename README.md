@@ -50,26 +50,26 @@ The script requires two mandatory arguments, the `source_file` (the path to the 
 ### Command-Line Syntax
 
 ```bash
-python ftsofeedupdate.py source_file destination_file [--add CATEGORY NAME SOURCES] [--update NAME NEW_SOURCES NEW_CATEGORY] [--delete NAME]
+python script.py source_file destination_file [--add CATEGORY NAME SOURCES] [--update NAME NEW_SOURCES NEW_CATEGORY] [--delete NAME]
 ```
 
 ### Example Commands
 
 1. **Add a New Feed**:
    ```bash
-   python ftsofeedupdate.py feeds.json feeds_updated.json --add 1 "NEW/USD" '[{"exchange":"gateio","symbol":"NEW/USDT"},{"exchange":"kraken","symbol":"NEW/USD"},{"exchange":"mexc","symbol":"NEW/USDT"}]'
+   python script.py feeds.json feeds_updated.json --add 1 "NEW/USD" '[{"exchange":"gateio","symbol":"NEW/USDT"},{"exchange":"kraken","symbol":"NEW/USD"},{"exchange":"mexc","symbol":"NEW/USDT"}]'
    ```
    This command adds a new feed with category `1`, name `"NEW_FEED/USD"`, and the specified sources.
 
 2. **Update an Existing Feed**:
    ```bash
-   python ftsofeedupdate.py feeds.json feeds_updated.json --update "NEW/USD" '[{"exchange":"nu-exchange","symbol":"NEW/USDT"},{"exchange":"kraken","symbol":"NEW/USD"},{"exchange":"mexc","symbol":"NEW/USDT"}]' 2
+   python script.py feeds.json feeds_updated.json --update "NEW/USD" '[{"exchange":"nu-exchange","symbol":"NEW/USDT"},{"exchange":"kraken","symbol":"NEW/USD"},{"exchange":"mexc","symbol":"NEW/USDT"}]' 2
    ```
    This command updates the feed `"FLR/USD"` by modifying its sources and updating the category to `2`.
 
 3. **Delete a Feed**:
    ```bash
-   python ftsofeedupdate.py feeds.json feeds_updated.json --delete "NEW/USD"
+   python script.py feeds.json feeds_updated.json --delete "NEW/USD"
    ```
    This command deletes the feed `"NEW/USD"` from the JSON file.
 
@@ -126,3 +126,22 @@ In this example, the script will update all feeds for the following combinations
 - kraken / USDC
 
 Make sure to specify both the exchanges and the base pairs for this command to work.
+
+
+### Specifying Source and Destination Files
+
+When using the `--update --all` option, you must specify both a source file (the JSON file containing the feeds) and a destination file (where the updated feeds will be saved).
+
+Example:
+
+```bash
+python ftsofeedupdate.py --update --all --exchanges coinbase kraken --base-pairs USD USDT --source-file feeds.json --dest-file updated_feeds.json
+```
+
+- `--source-file`: Path to the source JSON file that contains the current feed data.
+- `--dest-file`: Path to the file where the updated feed data will be saved.
+
+In this example, the script will:
+- Load the feed data from `feeds.json`.
+- Update all feeds for the exchanges `coinbase` and `kraken` with base pairs `USD` and `USDT`.
+- Save the updated feed data to `updated_feeds.json`.
