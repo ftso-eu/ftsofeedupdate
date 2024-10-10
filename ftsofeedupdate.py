@@ -80,3 +80,40 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# Function to update all feeds based on provided exchanges and base pairs
+def update_all_feeds(data, exchanges, base_pairs):
+    for exchange in exchanges:
+        for base_pair in base_pairs:
+            feed_name = f"{exchange}_{base_pair}".lower()
+            if feed_name in data["feeds"]:
+                print(f"Updating feed: {feed_name}")
+                # Update logic for the feed goes here, this is a placeholder
+            else:
+                print(f"Feed {feed_name} does not exist in the current data.")
+
+def main():
+    parser = argparse.ArgumentParser(description="JSON Feed Modification Script")
+    
+    # Adding the update --all options
+    parser.add_argument('--update', action='store_true', help='Update feed(s)')
+    parser.add_argument('--all', action='store_true', help='Update all feeds for a list of exchanges and base pairs')
+    parser.add_argument('--exchanges', nargs='+', help='List of exchanges to update')
+    parser.add_argument('--base-pairs', nargs='+', help='List of base pairs to update')
+    
+    args = parser.parse_args()
+
+    if args.update and args.all:
+        if args.exchanges is None or args.base_pairs is None:
+            print("Error: You must specify both exchanges and base pairs when using --update --all.")
+        else:
+            data = load_json_file("feeds.json")  # Assuming the feeds are in feeds.json
+            update_all_feeds(data, args.exchanges, args.base_pairs)
+            save_json_file(data, "feeds.json")
+            print("All feeds updated successfully.")
+    else:
+        # Other functionality as per the original script goes here
+        pass
+
+if __name__ == "__main__":
+    main()
