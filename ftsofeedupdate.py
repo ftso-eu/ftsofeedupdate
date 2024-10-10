@@ -19,48 +19,24 @@ def source_exists(sources, exchange, symbol):
             return True
     return False
 
-# Function to update or add feeds based on provided exchanges, base pairs, and category
+# Function to update feeds with category, exchanges, and base pairs
 def update_all_feeds(data, exchanges, base_pairs, category):
-    for base_pair in base_pairs:
-        feed_name = f"{base_pair}".upper()
-        found_feed = None
+    for feed in data:
+        # Update the category for every existing feed
+        feed['feed']['category'] = category
+        feed_name = feed['feed']['name'].split('/')[0]  # Extract symbol from the feed name (before the '/')
+        print(f"Updating category and sources for feed: {feed_name}")
         
-        # Search for an existing feed with the same name
-        for feed in data:
-            if feed['feed']['name'] == feed_name:
-                found_feed = feed
-                break
-        
-        if found_feed:
-            # Update the category of the existing feed
-            found_feed['feed']['category'] = category
-            print(f"Updating feed: {feed_name} with category {category}")
-            
-            # Add any new sources (exchange + symbol) that do not exist in the sources list
+        # For each base pair and exchange, update the sources
+        for base_pair in base_pairs:
+            symbol = f"{feed_name}/{base_pair}"  # Correctly format the symbol
             for exchange in exchanges:
-                symbol = f"{feed_name}"
-                if not source_exists(found_feed['sources'], exchange, symbol):
-                    found_feed['sources'].append({
+                if not source_exists(feed['sources'], exchange, symbol):
+                    feed['sources'].append({
                         'exchange': exchange,
                         'symbol': symbol
                     })
                     print(f"Added source {exchange} with symbol {symbol} to feed {feed_name}")
-        else:
-            # Create a new feed if it doesn't exist
-            print(f"Creating new feed: {feed_name}")
-            new_feed = {
-                "feed": {
-                    "category": category,
-                    "name": feed_name
-                },
-                "sources": [
-                    {
-                        "exchange": exchange,
-                        "symbol": base_pair
-                    } for exchange in exchanges
-                ]
-            }
-            data.append(new_feed)
 
 def main():
     parser = argparse.ArgumentParser(description="JSON Feed Modification Script")
@@ -93,7 +69,6 @@ def main():
             print(f"All feeds updated successfully and saved to {args.dest_file}.")
     else:
         print("Error: Please use the --update and --all options correctly.")
-        # Other functionality as per the original script
 
 if __name__ == "__main__":
     main()
