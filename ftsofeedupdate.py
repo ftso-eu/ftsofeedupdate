@@ -32,16 +32,21 @@ def update_all_feeds(data, exchanges, base_pairs, category):
                 break
         
         if found_feed:
-            print(f"Updating feed: {feed_name}")
+            # Update the category of the existing feed
+            found_feed['feed']['category'] = category
+            print(f"Updating feed: {feed_name} with category {category}")
+            
+            # Add any new sources (exchange + symbol) that do not exist in the sources list
             for exchange in exchanges:
-                symbol = f"{base_pair}"
-                # Add the exchange and symbol if it doesn't already exist in the sources list
+                symbol = f"{feed_name}"
                 if not source_exists(found_feed['sources'], exchange, symbol):
                     found_feed['sources'].append({
                         'exchange': exchange,
                         'symbol': symbol
                     })
+                    print(f"Added source {exchange} with symbol {symbol} to feed {feed_name}")
         else:
+            # Create a new feed if it doesn't exist
             print(f"Creating new feed: {feed_name}")
             new_feed = {
                 "feed": {
@@ -72,10 +77,6 @@ def main():
     parser.add_argument('--dest-file', required=True, help='Path to the destination JSON file')
     
     args = parser.parse_args()
-
-    # Debugging statements to see the parsed arguments
-    print(f"Exchanges: {args.exchanges}")
-    print(f"Base Pairs: {args.base_pairs}")
 
     if args.update and args.all:
         if args.exchanges is None or args.base_pairs is None:
