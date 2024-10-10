@@ -19,11 +19,13 @@ def source_exists(sources, exchange, symbol):
             return True
     return False
 
-# Function to update all feeds based on provided exchanges, base pairs, and category
+# Function to update or add feeds based on provided exchanges, base pairs, and category
 def update_all_feeds(data, exchanges, base_pairs, category):
     for base_pair in base_pairs:
         feed_name = f"{base_pair}".upper()
         found_feed = None
+        
+        # Search for an existing feed with the same name
         for feed in data:
             if feed['feed']['name'] == feed_name:
                 found_feed = feed
@@ -32,7 +34,8 @@ def update_all_feeds(data, exchanges, base_pairs, category):
         if found_feed:
             print(f"Updating feed: {feed_name}")
             for exchange in exchanges:
-                symbol = f"{feed_name.split('/')[0]}/{feed_name.split('/')[1]}"
+                symbol = f"{base_pair}"
+                # Add the exchange and symbol if it doesn't already exist in the sources list
                 if not source_exists(found_feed['sources'], exchange, symbol):
                     found_feed['sources'].append({
                         'exchange': exchange,
@@ -48,7 +51,7 @@ def update_all_feeds(data, exchanges, base_pairs, category):
                 "sources": [
                     {
                         "exchange": exchange,
-                        "symbol": f"{base_pair}"
+                        "symbol": base_pair
                     } for exchange in exchanges
                 ]
             }
@@ -81,7 +84,7 @@ def main():
             # Load the source file
             data = load_json_file(args.source_file)
             
-            # Update all feeds
+            # Update or add feeds
             update_all_feeds(data, args.exchanges, args.base_pairs, args.category)
             
             # Save the updated data to the destination file
@@ -89,7 +92,7 @@ def main():
             print(f"All feeds updated successfully and saved to {args.dest_file}.")
     else:
         print("Error: Please use the --update and --all options correctly.")
-        # Other functionality as per the original script goes here
+        # Other functionality as per the original script
 
 if __name__ == "__main__":
     main()
