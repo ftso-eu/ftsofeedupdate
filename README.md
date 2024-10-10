@@ -67,6 +67,13 @@ python script.py source_file destination_file [--add CATEGORY NAME SOURCES] [--u
    ```
    This command updates the feed `"FLR/USD"` by modifying its sources and updating the category to `2`.
 
+   **Update All Feeds with a List of Exchanges and Base Pairs**
+   To update all feeds, specify the `--all` option along with a list of exchanges and base pairs:
+
+   ```bash
+   python ftsofeedupdate.py --update --all --exchanges coinbase kraken --base-pairs USD USDT USDC --category 2 --source-file feeds.json --dest-file updated_feeds.json
+   ```
+
 3. **Delete a Feed**:
    ```bash
    python script.py feeds.json feeds_updated.json --delete "NEW/USD"
@@ -99,22 +106,3 @@ Each feed entry in the JSON contains:
 ## License
 
 This project is licensed under the MIT License.
-
-## Updating Feeds
-
-You can update a specific feed or all feeds using the `--update` command. 
-
-### Update a Single Feed
-```bash
-python ftsofeedupdate.py --update --source-file feeds.json --dest-file updated_feeds.json
-```
-
-### Update All Feeds with a List of Exchanges and Base Pairs
-To update all feeds, specify the `--all` option along with a list of exchanges and base pairs:
-
-```bash
-python ftsofeedupdate.py --update --all --exchanges coinbase kraken --base-pairs USD USDT --source-file feeds.json --dest-file updated_feeds.json
-```
-
-- `--source-file`: The path to the JSON file containing the current feed data.
-- `--dest-file`: The path where the updated feed data will be saved.
