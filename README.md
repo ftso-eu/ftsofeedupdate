@@ -8,7 +8,7 @@ Check [this](https://github.com/flare-foundation/ftso-v2-example-value-provider/
 ## Features
 
 - Add new feeds with category, name, and sources.
-- Update existing feeds, including changing their sources and category.
+- Update existing feeds, including changing their sources and category, or update all feeds at once using a list of exchanges and base pairs.
 - Delete feeds by specifying their name.
 
 ## Requirements
@@ -100,48 +100,21 @@ Each feed entry in the JSON contains:
 
 This project is licensed under the MIT License.
 
+## Updating Feeds
 
-## New Feature: Update All Feeds
+You can update a specific feed or all feeds using the `--update` command. 
 
-You can now update all the feeds using the `--update --all` option by specifying a list of exchanges and base pairs.
-
-### Usage:
-
+### Update a Single Feed
 ```bash
-python ftsofeedupdate.py --update --all --exchanges <exchange1> <exchange2> --base-pairs <pair1> <pair2>
+python ftsofeedupdate.py --update --source-file feeds.json --dest-file updated_feeds.json
 ```
 
-Example:
-
-```bash
-python ftsofeedupdate.py --update --all --exchanges coinbase kraken --base-pairs USD USDT USDC
-```
-
-In this example, the script will update all feeds for the following combinations:
-- coinbase / USD
-- coinbase / USDT
-- coinbase / USDC
-- kraken / USD
-- kraken / USDT
-- kraken / USDC
-
-Make sure to specify both the exchanges and the base pairs for this command to work.
-
-
-### Specifying Source and Destination Files
-
-When using the `--update --all` option, you must specify both a source file (the JSON file containing the feeds) and a destination file (where the updated feeds will be saved).
-
-Example:
+### Update All Feeds with a List of Exchanges and Base Pairs
+To update all feeds, specify the `--all` option along with a list of exchanges and base pairs:
 
 ```bash
 python ftsofeedupdate.py --update --all --exchanges coinbase kraken --base-pairs USD USDT --source-file feeds.json --dest-file updated_feeds.json
 ```
 
-- `--source-file`: Path to the source JSON file that contains the current feed data.
-- `--dest-file`: Path to the file where the updated feed data will be saved.
-
-In this example, the script will:
-- Load the feed data from `feeds.json`.
-- Update all feeds for the exchanges `coinbase` and `kraken` with base pairs `USD` and `USDT`.
-- Save the updated feed data to `updated_feeds.json`.
+- `--source-file`: The path to the JSON file containing the current feed data.
+- `--dest-file`: The path where the updated feed data will be saved.
