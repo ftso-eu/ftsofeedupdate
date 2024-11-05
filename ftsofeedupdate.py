@@ -12,19 +12,26 @@ def update_feed(feed_data, category, exchange_pairs, update_all=False, specific_
             if specific_pair and base_asset != specific_pair:
                 continue
 
-            existing_exchanges = {source['exchange']: source for source in feed['sources']}
+            # Filter out any existing sources that don't match the specified exchanges and pairs
             new_sources = []
+            existing_sources = {(source['exchange'], source['symbol']): source for source in feed['sources']}
 
             # Add USD and USDT pairs based on exchange groupings
             for exchanges, base_pair in exchange_pairs:
-                symbol = f"{base_asset}/{base_pair}"
                 for exchange in exchanges:
-                    if exchange not in existing_exchanges or existing_exchanges[exchange]['symbol'] != symbol:
+                    symbol = f"{base_asset}/{base_pair}"
+                    key = (exchange, symbol)
+                    # Only add if not already present in existing_sources
+                    if key not in existing_sources:
                         new_sources.append({"exchange": exchange, "symbol": symbol})
+                    # Remove any existing conflicting pairs from the same exchange
+                    conflicting_symbol = f"{base_asset}/{'USDT' if base_pair == 'USD' else 'USD'}"
+                    conflicting_key = (exchange, conflicting_symbol)
+                    if conflicting_key in existing_sources:
+                        del existing_sources[conflicting_key]
 
-            # Update sources while preserving unique entries
-            feed['sources'].extend(new_sources)
-            feed['sources'] = list({(source['exchange'], source['symbol']): source for source in feed['sources']}.values())
+            # Combine new sources with existing sources, ensuring no duplicates
+            feed['sources'] = list(existing_sources.values()) + new_sources
 
 def main():
     parser = argparse.ArgumentParser(description="Update feed sources with specific base pairs per exchange group.")
