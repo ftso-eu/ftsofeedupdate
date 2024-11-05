@@ -1,105 +1,53 @@
 
 # JSON Feed Modification Script
 
-This Python script allows users to modify JSON files containing feed information by adding, updating, or deleting feeds directly from the command line.
-
-Check [this](https://github.com/flare-foundation/ftso-v2-example-value-provider/blob/main/src/config/feeds.json) out for reference.
+This Python script allows users to modify JSON feed data by adding, updating, or removing sources with specific base pairs (`USD` or `USDT`) for different exchange groups.
 
 ## Features
 
-- Add new feeds with category, name, and sources.
-- Update existing feeds, including changing their sources and category, or update all feeds at once using a list of exchanges and base pairs.
-- Delete feeds by specifying their name.
+- **Add Sources with Specific Base Pairs**: Add sources for exchanges with either `USD` or `USDT` pairs only, based on user-specified groups.
+- **Avoid Duplicates**: Ensures no duplicate entries and no conflicting pairs (e.g., an exchange won't have both `USD` and `USDT` for the same asset).
+- **Selective Updates**: Allows updates for all pairs in a specified category or a single specified pair.
 
 ## Requirements
 
 - **Python 3.x**
-- **Python Libraries**: No external libraries are required, as the script uses the standard Python libraries: `argparse` and `json`.
-
-## Installation
-
-### 1. Install Python
-
-Make sure Python 3.x is installed on your machine. If you don't have it, follow the instructions below:
-
-- **Windows**: Download and install Python from [here](https://www.python.org/downloads/).
-- **Linux/macOS**: Python is usually pre-installed, but you can install it using your package manager. 
-    - On Ubuntu:
-      ```bash
-      sudo apt-get install python3
-      ```
-
-### 2. Clone or Download the Script
-
-You can clone the script using `git` or download it manually.
-
-```bash
-git clone https://github.com/ftso-eu/ftsofeedupdate
-```
+- **Python Libraries**: Uses the standard Python libraries: `argparse` and `json`.
 
 ## Usage
 
-### Running the Script
+### Command-Line Arguments
 
-The script requires two mandatory arguments, the `source_file` (the path to the JSON file you want to modify) and the `destination_file` (where the updated JSON should be saved). Additionally, you can specify one of the following operations:
+| Argument         | Description                                                                                               |
+|------------------|-----------------------------------------------------------------------------------------------------------|
+| `--category`     | The category of feeds to update.                                                                          |
+| `--exchange-pairs` | Specify exchange groups and base pairs (e.g., `exchange1 exchange2 USD`). Multiple groups can be specified.|
+| `--source-file`  | Path to the source JSON file to be modified.                                                              |
+| `--dest-file`    | Path to save the updated JSON file.                                                                       |
+| `--all`          | Update all pairs in the specified category.                                                               |
+| `--pair`         | Update only a specific pair (e.g., `BTC`) instead of all.                                                 |
 
-- `--add`: Adds a new feed to the JSON file.
-- `--update`: Updates an existing feed's sources or category.
-- `--delete`: Deletes a feed by its name.
+### Examples
 
-### Command-Line Syntax
-
-```bash
-python script.py source_file destination_file [--add CATEGORY NAME SOURCES] [--update NAME NEW_SOURCES NEW_CATEGORY] [--delete NAME]
-```
-
-### Example Commands
-
-1. **Add a New Feed**:
+1. **Update All Pairs with USD and USDT Separately**:
    ```bash
-   python script.py feeds.json feeds_updated.json --add 1 "NEW/USD" '[{"exchange":"gateio","symbol":"NEW/USDT"},{"exchange":"kraken","symbol":"NEW/USD"},{"exchange":"mexc","symbol":"NEW/USDT"}]'
+   python3 ftsofeedupdate.py --category 1 --all    --exchange-pairs bitstamp coinbase kraken USD    --exchange-pairs bybit gate binance USDT    --source-file feeds.json --dest-file updated_feeds.json
    ```
-   This command adds a new feed with category `1`, name `"NEW_FEED/USD"`, and the specified sources.
+   - This command updates all pairs in category `1`, adding only `USD` pairs for `bitstamp`, `coinbase`, `kraken`, and only `USDT` pairs for `bybit`, `gate`, and `binance`.
 
-2. **Update an Existing Feed**:
+2. **Update a Specific Pair (e.g., BTC)**:
    ```bash
-   python script.py feeds.json feeds_updated.json --update "NEW/USD" '[{"exchange":"nu-exchange","symbol":"NEW/USDT"},{"exchange":"kraken","symbol":"NEW/USD"},{"exchange":"mexc","symbol":"NEW/USDT"}]' 2
+   python3 ftsofeedupdate.py --category 1 --pair BTC    --exchange-pairs bitstamp coinbase kraken USD    --exchange-pairs bybit gate binance USDT    --source-file feeds.json --dest-file updated_feeds.json
    ```
-   This command updates the feed `"FLR/USD"` by modifying its sources and updating the category to `2`.
-
-   **Update All Feeds with a List of Exchanges and Base Pairs**
-   To update all feeds, specify the `--all` option along with a list of exchanges and base pairs:
-
-   ```bash
-   python ftsofeedupdate.py --update --all --exchanges coinbase kraken --base-pairs USD USDT USDC --category 2 --source-file feeds.json --dest-file updated_feeds.json
-   ```
-
-3. **Delete a Feed**:
-   ```bash
-   python script.py feeds.json feeds_updated.json --delete "NEW/USD"
-   ```
-   This command deletes the feed `"NEW/USD"` from the JSON file.
-
-### Parameters
-
-- **source_file**: Path to the source JSON file to be modified.
-- **destination_file**: Path to save the updated JSON file.
-- **--add**: Adds a new feed with the provided category, name, and sources. Example: `--add CATEGORY NAME SOURCES`
-- **--update**: Updates the sources or category of an existing feed. Example: `--update NAME NEW_SOURCES NEW_CATEGORY`
-- **--delete**: Deletes the feed by the specified name. Example: `--delete NAME`
+   - This command updates only the `BTC` pair in category `1`, assigning `USD` pairs for `bitstamp`, `coinbase`, `kraken` and `USDT` pairs for `bybit`, `gate`, and `binance`.
 
 ### How It Works
 
-1. **Loading the JSON**: The script loads the source JSON file into memory.
-2. **Applying Modifications**: Based on the command provided, the script either adds, updates, or deletes the specified feed(s).
-3. **Saving the Changes**: The updated data is saved into the destination file.
-
-### Feed Structure
-
-Each feed entry in the JSON contains:
-- **Category**: An integer indicating the feed's category.
-- **Name**: A string representing the feed's name.
-- **Sources**: A list of sources, where each source includes an `exchange` and a `symbol`.
+1. **Loading the JSON**: Loads the source JSON file into memory.
+2. **Applying Modifications**:
+   - Adds the specified `USD` and `USDT` pairs exclusively to the designated exchanges.
+   - Removes any conflicting entries (e.g., if an exchange has both `USD` and `USDT` for the same asset, the conflicting pair is removed).
+3. **Saving the Changes**: Writes the modified JSON data to the destination file.
 
 ---
 
