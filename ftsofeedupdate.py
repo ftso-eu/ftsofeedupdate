@@ -2,73 +2,48 @@
 import json
 import argparse
 
-# Function to load the JSON file
-def load_json_file(file_path):
-    with open(file_path, "r") as file:
-        return json.load(file)
+def load_json(file_path):
+    with open(file_path, 'r') as f:
+        return json.load(f)
 
-# Function to save the updated JSON file
-def save_json_file(data, file_path):
-    with open(file_path, "w") as file:
-        json.dump(data, file, indent=4)
+def save_json(data, file_path):
+    with open(file_path, 'w') as f:
+        json.dump(data, f, indent=4)
 
-# Function to check if a source already exists in a feed
-def source_exists(sources, exchange, symbol):
-    for source in sources:
-        if source['exchange'] == exchange and source['symbol'] == symbol:
-            return True
-    return False
+def update_sources(feeds, usd_exchanges, usdt_exchanges, category):
+    for feed in feeds:
+        if feed['feed']['category'] == category:
+            feed_name = feed['feed']['name']
+            base_currency = feed_name.split('/')[1]
 
-# Function to update feeds with category, exchanges, and base pairs
-def update_all_feeds(data, exchanges, base_pairs, category):
-    for feed in data:
-        # Update the category for every existing feed
-        feed['feed']['category'] = category
-        feed_name = feed['feed']['name'].split('/')[0]  # Extract symbol from the feed name (before the '/')
-        print(f"Updating category and sources for feed: {feed_name}")
-        
-        # For each base pair and exchange, update the sources
-        for base_pair in base_pairs:
-            symbol = f"{feed_name}/{base_pair}"  # Correctly format the symbol
-            for exchange in exchanges:
-                if not source_exists(feed['sources'], exchange, symbol):
-                    feed['sources'].append({
-                        'exchange': exchange,
-                        'symbol': symbol
-                    })
-                    print(f"Added source {exchange} with symbol {symbol} to feed {feed_name}")
+            # Add USD sources for specified USD exchanges
+            if base_currency == 'USD' and usd_exchanges:
+                for exchange in usd_exchanges:
+                    usd_source = {'exchange': exchange, 'symbol': f"{feed_name}"}
+                    if usd_source not in feed['sources']:
+                        feed['sources'].append(usd_source)
+
+            # Add USDT sources for specified USDT exchanges
+            if base_currency == 'USD' and usdt_exchanges:
+                for exchange in usdt_exchanges:
+                    usdt_source = {'exchange': exchange, 'symbol': f"{feed_name.split('/')[0]}/USDT"}
+                    if usdt_source not in feed['sources']:
+                        feed['sources'].append(usdt_source)
+    return feeds
 
 def main():
-    parser = argparse.ArgumentParser(description="JSON Feed Modification Script")
-    
-    # Adding the update --all options as a flag, not expecting arguments
-    parser.add_argument('--update', action='store_true', help='Update feed(s)')
-    parser.add_argument('--all', action='store_true', help='Update all feeds for a list of base pairs')
-    parser.add_argument('--exchanges', nargs='+', help='List of exchanges to update', required=True)
-    parser.add_argument('--base-pairs', nargs='+', help='List of base pairs to update', required=True)
-    parser.add_argument('--category', type=int, required=True, help='Numeric category of the feeds to update')
-
-    # Adding the source and destination file options
-    parser.add_argument('--source-file', required=True, help='Path to the source JSON file')
-    parser.add_argument('--dest-file', required=True, help='Path to the destination JSON file')
+    parser = argparse.ArgumentParser(description="Update FTSO feed JSON with specific USD and USDT pairs")
+    parser.add_argument("--source-file", required=True, help="Path to the source JSON file")
+    parser.add_argument("--dest-file", required=True, help="Path to save the updated JSON file")
+    parser.add_argument("--category", type=int, required=True, help="Category number to update feeds for")
+    parser.add_argument("--usd-exchanges", nargs='+', help="List of exchanges to add USD pairs to")
+    parser.add_argument("--usdt-exchanges", nargs='+', help="List of exchanges to add USDT pairs to")
     
     args = parser.parse_args()
-
-    if args.update and args.all:
-        if args.exchanges is None or args.base_pairs is None:
-            print("Error: You must specify both exchanges and base pairs when using --update --all.")
-        else:
-            # Load the source file
-            data = load_json_file(args.source_file)
-            
-            # Update or add feeds
-            update_all_feeds(data, args.exchanges, args.base_pairs, args.category)
-            
-            # Save the updated data to the destination file
-            save_json_file(data, args.dest_file)
-            print(f"All feeds updated successfully and saved to {args.dest_file}.")
-    else:
-        print("Error: Please use the --update and --all options correctly.")
+    
+    feeds = load_json(args.source_file)
+    updated_feeds = update_sources(feeds, args.usd_exchanges, args.usdt_exchanges, args.category)
+    save_json(updated_feeds, args.dest_file)
 
 if __name__ == "__main__":
     main()
